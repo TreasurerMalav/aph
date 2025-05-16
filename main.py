@@ -8,6 +8,7 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
+from qdrant_client import QdrantClient
 import streamlit as st
 import uvicorn
 import datetime
@@ -15,7 +16,8 @@ import os
 
 #load_dotenv()
 
-api_key = os.environ.get('OPENAI_API_KEY')
+openai_api_key = os.environ.get('OPENAI_API_KEY')
+qdrant_api_key = os.environ.get('QDRANT_API_KEY')
 
 def generate_instructions(type, options, level, number_of_questions, answer, relevant_chunks, generate_image):
     if type == "Normal Quiz":
@@ -160,7 +162,12 @@ submit = st.sidebar.button("Submit")
 
 embeddings = OpenAIEmbeddings(
 model="text-embedding-3-large",
-api_key=api_key
+api_key=openai_api_key
+)
+
+qdrant_client = QdrantClient(
+    url="https://4ea98238-2526-451b-9a17-e3514c0987ca.us-east-1-0.aws.cloud.qdrant.io:6333", 
+    api_key=qdrant_api_key,
 )
 
 if index_data and website_link:
@@ -182,7 +189,8 @@ if index_data and website_link:
 
     vector_store = QdrantVectorStore.from_documents(
         documents=[],
-        url="http://localhost:6333",
+        #url="https://4ea98238-2526-451b-9a17-e3514c0987ca.us-east-1-0.aws.cloud.qdrant.io:6333",
+        client=qdrant_client,
         collection_name=collection_name,
         embedding=embeddings
     ) 
@@ -204,7 +212,8 @@ if submit and generate_from_indexed_data is False:
 if submit and generate_from_indexed_data is True:
     status = st.status("Generating Quiz ...")
     retriever = QdrantVectorStore.from_existing_collection(
-        url="http://localhost:6333",
+        #url="https://4ea98238-2526-451b-9a17-e3514c0987ca.us-east-1-0.aws.cloud.qdrant.io:6333",
+        client=qdrant_client,
         collection_name=str(datetime.date.today()),
         embedding=embeddings
     )
