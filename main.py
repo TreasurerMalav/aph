@@ -189,7 +189,7 @@ if index_data and website_link:
 
     vector_store = QdrantVectorStore.from_documents(
         documents=[],
-        url="https://4ea98238-2526-451b-9a17-e3514c0987ca.us-east-1-0.aws.cloud.qdrant.io:6333",
+        url="https://46aef43b-2fb6-4101-8652-dea16b4860b8.us-east-1-0.aws.cloud.qdrant.io:6333",
         api_key=qdrant_api_key,
         collection_name=collection_name,
         embedding=embeddings
@@ -212,7 +212,7 @@ if submit and generate_from_indexed_data is False:
 if submit and generate_from_indexed_data is True:
     status = st.status("Generating Quiz ...")
     retriever = QdrantVectorStore.from_existing_collection(
-        url="https://4ea98238-2526-451b-9a17-e3514c0987ca.us-east-1-0.aws.cloud.qdrant.io:6333",
+        url="https://46aef43b-2fb6-4101-8652-dea16b4860b8.us-east-1-0.aws.cloud.qdrant.io:6333",
         api_key=qdrant_api_key,
         collection_name=str(datetime.date.today()),
         embedding=embeddings
